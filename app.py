@@ -20,7 +20,7 @@ ma = Marshmallow(app)
 class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
-    pic_url = db.Column(db.String(), nullable=False)
+    pic_url = db.Column(db.String(), nullable=True)
     username = db.Column(db.String(), nullable=False)
     description = db.Column(db.String(420), nullable=True)
 
