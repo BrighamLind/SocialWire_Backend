@@ -22,3 +22,17 @@ class User(db.Model):
         self.pic_url = pic_url
         self.username = username
         self. description = description
+
+@app.route("/turpentine", methods=["GET"])
+def get_all_users():
+    all_users = db.session.query(User.id, User.pic_url, User.username, User.description).all()
+    return jsonify(all_users)
+
+@app.route("/turpentine/<username>", methods=["GET"])
+def get_user_by_username():
+    user = db.session.query(User.id, User.pic_url, User.username, User.description).filter(User.username == username).first()
+    return jsonify(user)
+
+if __name__ == "__main__":
+    app.debug = True
+    app.run()
