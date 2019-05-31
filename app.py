@@ -6,7 +6,7 @@ from flask_heroku import Heroku
 import os
 
 app = Flask(__name__)
-heroku - Heroku(app)
+heroku = Heroku(app)
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + \
@@ -29,9 +29,11 @@ class User(db.Model):
         self.username = username
         self.description = description
 
+
 class UserSchema(ma.Schema):
     class Meta:
         fields = ("id", "pic_url", "username", "description")
+
 
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
@@ -49,15 +51,19 @@ def add_user():
     user = User.query.get(record.id)
 
     return user_schema.jsonify(user)
-  
+
+
 @app.route("/turpentine", methods=["GET"])
 def get_all_users():
-    all_users = db.session.query(User.id, User.pic_url, User.username, User.description).all()
+    all_users = db.session.query(
+        User.id, User.pic_url, User.username, User.description).all()
     return jsonify(all_users)
+
 
 @app.route("/turpentine/<username>", methods=["GET"])
 def get_user_by_username(username):
-    user = db.session.query(User.id, User.pic_url, User.username, User.description).filter(User.username == username).first()
+    user = db.session.query(User.id, User.pic_url, User.username, User.description).filter(
+        User.username == username).first()
     return jsonify(user)
 
 
