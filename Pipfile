@@ -9,7 +9,6 @@ verify_ssl = true
 flask-sqlalchemy = "*"
 flask-cors = "*"
 flask = "*"
-mysql = "*"
 flask-marshmallow = "*"
 marshmallow-sqlalchemy = "*"
 
