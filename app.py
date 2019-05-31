@@ -37,8 +37,8 @@ users_schema = UserSchema(many=True)
 
 @app.route("/add-user", methods=["POST"])
 def add_user():
-    pic_url = request.json["user-picture"]
-    username = request.json["user-name"]
+    pic_url = request.json["image"]
+    username = request.json["name"]
     description = request.json["description"]
 
     record = User(pic_url, username, description)
@@ -54,7 +54,7 @@ def get_all_users():
     return jsonify(all_users)
 
 @app.route("/turpentine/<username>", methods=["GET"])
-def get_user_by_username():
+def get_user_by_username(username):
     user = db.session.query(User.id, User.pic_url, User.username, User.description).filter(User.username == username).first()
     return jsonify(user)
 
