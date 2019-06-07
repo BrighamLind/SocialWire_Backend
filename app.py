@@ -20,8 +20,8 @@ ma = Marshmallow(app)
 class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
-    pic_url = db.Column(db.String(), nullable=True)
-    username = db.Column(db.String(), nullable=False)
+    pic_url = db.Column(db.String(), nullable=False)
+    username = db.Column(db.String(), unique=True, nullable=False)
     description = db.Column(db.String(420), nullable=True)
 
     def __init__(self, pic_url, username, description):
@@ -55,16 +55,44 @@ def add_user():
 
 @app.route("/turpentine", methods=["GET"])
 def get_all_users():
-    all_users = db.session.query(
-        User.id, User.pic_url, User.username, User.description).all()
-    return jsonify(all_users)
+    all_users = User.query.all()
+    result = users_schema.dump(all_users).data
+
+    return jsonify(result)
 
 
-@app.route("/turpentine/<username>", methods=["GET"])
-def get_user_by_username(username):
-    user = db.session.query(User.id, User.pic_url, User.username, User.description).filter(
-        User.username == username).first()
-    return jsonify(user)
+@app.route("/turpentine/<id>", methods=["GET"])
+def get_user_by_username(id):
+    record = User.query.get(id)
+
+    return user_schema.jsonify(record)
+
+
+@app.route("/edit/<id>", methods=["PUT"])
+def edit_user(id):
+    record = User.query.get(id)
+
+    new_pic_url = request.json["image"]
+    new_username = request.json["username"]
+    new_description = request.json["description"]
+
+    record.pic_url = new_pic_url
+    record.username = new_username
+    record.description = new_description
+
+    db.session.commit()
+
+    return user_schema.jsonify(record)
+
+
+@app.route("/delete/<id>", methods=["DELETE"])
+def delete_user(id):
+    record = User.query.get(id)
+
+    db.session.delete(record)
+    db.session.commit()
+
+    return f"Successfully deleted profile #{id}"
 
 
 if __name__ == "__main__":
