@@ -20,19 +20,19 @@ ma = Marshmallow(app)
 class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
-    pic_url = db.Column(db.String(), nullable=False)
-    username = db.Column(db.String(), unique=True, nullable=False)
+    image = db.Column(db.String(), nullable=False)
+    name = db.Column(db.String(), unique=True, nullable=False)
     description = db.Column(db.String(420), nullable=True)
 
-    def __init__(self, pic_url, username, description):
-        self.pic_url = pic_url
-        self.username = username
+    def __init__(self, image, name, description):
+        self.image = image
+        self.name = name
         self.description = description
 
 
 class UserSchema(ma.Schema):
     class Meta:
-        fields = ("id", "pic_url", "username", "description")
+        fields = ("id", "image", "name", "description")
 
 
 user_schema = UserSchema()
@@ -41,11 +41,11 @@ users_schema = UserSchema(many=True)
 
 @app.route("/add-user", methods=["POST"])
 def add_user():
-    pic_url = request.json["image"]
-    username = request.json["name"]
+    image = request.json["image"]
+    name = request.json["name"]
     description = request.json["description"]
 
-    record = User(pic_url, username, description)
+    record = User(image, name, description)
     db.session.add(record)
     db.session.commit()
     user = User.query.get(record.id)
@@ -62,7 +62,7 @@ def get_all_users():
 
 
 @app.route("/turpentine/<id>", methods=["GET"])
-def get_user_by_username(id):
+def get_user_by_name(id):
     record = User.query.get(id)
 
     return user_schema.jsonify(record)
@@ -72,12 +72,12 @@ def get_user_by_username(id):
 def edit_user(id):
     record = User.query.get(id)
 
-    new_pic_url = request.json["image"]
-    new_username = request.json["username"]
+    new_image = request.json["image"]
+    new_name = request.json["name"]
     new_description = request.json["description"]
 
-    record.pic_url = new_pic_url
-    record.username = new_username
+    record.image = new_image
+    record.name = new_name
     record.description = new_description
 
     db.session.commit()
